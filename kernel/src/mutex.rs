@@ -1,7 +1,7 @@
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::cell::UnsafeCell;
 use std::ops::{DerefMut, Deref, Drop};
-
+use pi;
 #[repr(align(32))]
 pub struct Mutex<T> {
     data: UnsafeCell<T>,
@@ -34,7 +34,13 @@ impl<T> Mutex<T> {
     #[inline(never)]
     pub fn lock(&self) -> MutexGuard<T> {
         // Wait until we can "aquire" the lock, then "acquire" it.
-        while self.lock.load(Ordering::Relaxed) { }
+        let mut gpio26=pi::gpio::Gpio::new(26).into_output();
+
+        while self.lock.load(Ordering::Relaxed) { 
+                        gpio26.set();
+        }
+                        gpio26.clear();
+
         self.lock.store(true, Ordering::Relaxed);
 
         MutexGuard { lock: &self }

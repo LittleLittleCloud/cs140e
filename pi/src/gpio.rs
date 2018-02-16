@@ -66,7 +66,6 @@ pub struct Gpio<State> {
 
 /// The base address of the `GPIO` registers.
 const GPIO_BASE: usize = IO_BASE + 0x200000;
-
 impl<T> Gpio<T> {
     /// Transitions `self` to state `S`, consuming `self` and returning a new
     /// `Gpio` instance in state `S`. This method should _never_ be exposed to
@@ -102,7 +101,14 @@ impl Gpio<Uninitialized> {
     /// Enables the alternative function `function` for `self`. Consumes self
     /// and returns a `Gpio` structure in the `Alt` state.
     pub fn into_alt(self, function: Function) -> Gpio<Alt> {
-        unimplemented!()
+        let mut val=self.registers.FSEL.get_mut((self.pin/10) as usize).unwrap().read();
+        val|=(function as u32)<<((self.pin-((self.pin/10)*10))*3);
+        self.registers.FSEL.get_mut((self.pin/10) as usize).unwrap().write(val);
+        Gpio {
+            registers: unsafe {&mut *(GPIO_BASE as *mut Registers)},
+            pin:self.pin,
+            _state:PhantomData
+        }
     }
 
     /// Sets this pin to be an _output_ pin. Consumes self and returns a `Gpio`
@@ -121,12 +127,20 @@ impl Gpio<Uninitialized> {
 impl Gpio<Output> {
     /// Sets (turns on) the pin.
     pub fn set(&mut self) {
-        unimplemented!()
+        if self.pin<32{
+            self.registers.SET.get_mut(0).unwrap().write(1<<self.pin);
+        }else{
+            self.registers.SET.get_mut(1).unwrap().write(1<<self.pin-32);
+        }
     }
 
     /// Clears (turns off) the pin.
     pub fn clear(&mut self) {
-        unimplemented!()
+        if self.pin<32{
+            self.registers.CLR.get_mut(0).unwrap().write(1<<self.pin);
+        }else{
+            self.registers.CLR.get_mut(1).unwrap().write(1<<self.pin-32);
+        }
     }
 }
 
@@ -134,6 +148,12 @@ impl Gpio<Input> {
     /// Reads the pin's value. Returns `true` if the level is high and `false`
     /// if the level is low.
     pub fn level(&mut self) -> bool {
-        unimplemented!()
+        if self.pin<32{
+            let res:bool=(self.registers.LEV.get_mut(0).unwrap().read()&(1<<self.pin))==(1<<self.pin);
+            res
+        }else{
+            let res:bool=(self.registers.LEV.get_mut(1).unwrap().read()&(1<<self.pin-32))==(1<<self.pin-32);
+            res
+        }
     }
 }
