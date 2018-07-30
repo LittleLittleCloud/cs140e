@@ -1,5 +1,4 @@
 use StackVec;
-
 #[test]
 fn assignment_text_example() {
     let mut storage = [0u8; 1024];
@@ -8,7 +7,6 @@ fn assignment_text_example() {
     for i in 0..10 {
         vec.push(i * i).expect("can push 1024 times");
     }
-
     for (i, v) in vec.iter().enumerate() {
         assert_eq!(*v, (i * i) as u8);
     }

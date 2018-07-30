@@ -192,7 +192,7 @@ fn test_raw_transmission() {
 
 #[test]
 fn test_small_packet_eof_error() {
-    let mut xmodem = Xmodem::new(Cursor::new(vec![NAK, NAK, NAK]));
+    let mut xmodem = Xmodem::new(Cursor::new(vec![SOH,SOH, 1, 254]));
 
     let mut buffer = [1, 2, 3];
     let e = xmodem.read_packet(&mut buffer[..]).expect_err("read EOF");
@@ -205,7 +205,7 @@ fn test_small_packet_eof_error() {
 #[test]
 fn test_bad_control() {
     let mut packet = [0; 128];
-    let e = Xmodem::new(Cursor::new(vec![0, CAN]))
+    let e = Xmodem::new(Cursor::new(vec![0,CAN]))
         .read_packet(&mut packet[..])
         .expect_err("CAN");
 

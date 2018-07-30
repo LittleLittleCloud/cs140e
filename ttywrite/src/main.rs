@@ -48,11 +48,51 @@ struct Opt {
 }
 
 fn main() {
+    use serial::prelude::*;
     use std::fs::File;
-    use std::io::{self, BufReader, BufRead};
-
+    use std::io::{self, BufReader, BufRead,Write,Read,Cursor};
     let opt = Opt::from_args();
     let mut serial = serial::open(&opt.tty_path).expect("path points to invalid TTY");
-
-    // FIXME: Implement the `ttywrite` utility.
+    serial.reconfigure(&|settings| {
+        settings.set_baud_rate(opt.baud_rate);
+        settings.set_char_size(opt.char_width);
+        settings.set_stop_bits(serial::Stop1);
+        settings.set_flow_control(serial::FlowNone);
+        Ok(())
+    });
+    let mut l:usize=0;
+    serial::SerialPort::set_timeout(&mut serial,Duration::new(opt.timeout,0)).expect("set time fail");
+    match (opt.input,opt.raw) {
+        (None,true) => {
+                        let input=io::stdin();
+                        let mut f=BufReader::new(input);
+                        let mut vec=vec![];
+                        io::copy(&mut f,&mut vec).expect("copy fail");
+                        serial.write(&vec[..]).expect("write fail");
+                        l=vec.len();
+        }
+        (Some(buf),true) => {
+                        let input=File::open(buf.as_path()).expect("can't open file");
+                        let mut f=BufReader::new(input);
+                        let mut vec=vec![];
+                        io::copy(&mut f,&mut vec).expect("copy fail");                        
+                        serial.write(&vec[..]).expect("write fail");
+                        l=vec.len();
+        }
+        (None,false)    =>{
+                        let input=io::stdin();
+                        let mut f=BufReader::new(input);
+                        let mut vec=vec![];
+                        io::copy(&mut f,&mut vec).expect("copy fail");                        
+                        l=Xmodem::transmit(&vec[..],serial).expect("transmit fail");
+        }
+        (Some(buf),false)=>{            
+                        let input=File::open(buf.as_path()).expect("can't open file");
+                        let mut f=BufReader::new(input);
+                        let mut vec=vec![];
+                        io::copy(&mut f,&mut vec).expect("copy fail");                        
+                        l=Xmodem::transmit(&vec[..],serial).expect("transmit fail");
+        }
+    }
+    print!("wrote {} bytes to {:?}\n",l,opt.tty_path);
 }

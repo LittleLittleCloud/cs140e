@@ -19,3 +19,4 @@ pub type ProgressFn = fn(Progress);
 
 /// Noop progress callback.
 pub fn noop(_: Progress) {  }
+// pub fn start(p:&mut Progress)

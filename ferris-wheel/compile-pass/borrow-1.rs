@@ -1,5 +1,5 @@
 // FIXME: Make me compile! Diff budget: 1 line.
-
+#[derive(Clone,Copy)]
 struct MyType(usize);
 
 // Do not modify this function.

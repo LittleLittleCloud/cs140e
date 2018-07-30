@@ -13,12 +13,11 @@ pub trait FooToo {
 impl Foo for Dummy { }
 
 impl FooToo for Dummy { }
-
 fn main() {
     let dummy = Dummy;
 
-    let x = dummy.foo();
-    let y = dummy.foo();
+    let x = Foo::foo(&dummy);
+    let y = FooToo::foo(&dummy);
 
     // Values for `x` and `y` must come from calling `foo()` methods.
     assert_eq!(x, 1);
