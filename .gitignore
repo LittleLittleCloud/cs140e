@@ -1,3 +1,39 @@
+
+# Swap
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-v][a-z]
+[._]sw[a-p]
+
+# Session
+Session.vim
+
+# Temporary
+.netrwhist
+*~
+
+# Org-mode
+.org-id-locations
+*_archive
+
+# flymake-mode
+*_flymake.*
+
+# reftex files
+*.rel
+
+# cask packages
+.cask/
+
+# Flycheck
+flycheck_*.el
+
+# projectiles files
+.projectile
+
+# directory configuration
+.dir-locals.el
+
 # Prerequisites
 *.d
 
@@ -111,9 +147,21 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# Submission files
+*.tar.gz
+
+# Assignment 2 specific
+resources/
+files/
 # Build directories
 build/
 /files/
 
 # Submission files
 *.tar.gz
+# Submission files
+*.tar.gz
+
+# Assignment 1 specific
+ttywrite/input
+ttywrite/output
