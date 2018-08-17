@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Swap
 [._]*.s[a-v][a-z]
 [._]*.sw[a-p]
@@ -34,8 +34,6 @@ flycheck_*.el
 # directory configuration
 .dir-locals.el
 
-=======
->>>>>>> 887ea15014d1b585a5f5a9ca1823089c2b388efb
 # Prerequisites
 *.d
 
@@ -149,18 +147,21 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-<<<<<<< HEAD
 # Submission files
 *.tar.gz
 
 # Assignment 2 specific
 resources/
 files/
-=======
 # Build directories
 build/
 /files/
 
 # Submission files
 *.tar.gz
->>>>>>> 887ea15014d1b585a5f5a9ca1823089c2b388efb
+# Submission files
+*.tar.gz
+
+# Assignment 1 specific
+ttywrite/input
+ttywrite/output
